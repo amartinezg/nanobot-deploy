@@ -1,0 +1,50 @@
+services:
+  nanobot:
+    image: nanobot:local
+    container_name: nanobot-boost
+    restart: unless-stopped
+    env_file: ./secrets.env
+    volumes:
+      - ./nanobot-data:/home/nanobot/.nanobot
+      - ./gog:/home/nanobot/.local/bin/gog:ro
+      - ./gogcli-config:/home/nanobot/.config/gogcli
+      - ./client_secret.json:/home/nanobot/client_secret.json:ro
+    environment:
+      - XDG_CONFIG_HOME=/home/nanobot/.config
+      - PATH=/home/nanobot/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    cap_drop:
+      - ALL
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor=unconfined
+      - seccomp=unconfined
+    command: ["gateway"]
+    networks:
+      - agent-net
+    mem_limit: 1g
+    cpus: 1.0
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.50.0-noble
+    container_name: playwright-mcp-boost
+    restart: unless-stopped
+    env_file: ./secrets.env
+    volumes:
+      - ./playwright-cache:/ms-playwright
+    command:
+      - sh
+      - -c
+      - |
+        npx -y @playwright/mcp@latest install-browser chrome-for-testing &&
+        exec npx -y @playwright/mcp@latest --port 8931 --host 0.0.0.0 --headless --no-sandbox --browser chromium --allowed-hosts '*' --isolated
+    expose:
+      - '8931'
+    networks:
+      - agent-net
+    mem_limit: 768m
+    profiles: ["browser"]
+
+networks:
+  agent-net:
+    driver: bridge

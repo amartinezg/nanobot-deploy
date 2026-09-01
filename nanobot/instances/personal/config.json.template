@@ -1,0 +1,84 @@
+{
+  "providers": {
+    "openrouter": {
+      "apiKey": "${OPENROUTER_API_KEY}"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "provider": "openrouter",
+      "timezone": "America/Bogota",
+      "modelPreset": "fast",
+      "fallbackModels": [
+        "cheap-bulk"
+      ]
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "token": "${TELEGRAM_TOKEN}",
+      "allowFrom": [
+        "${TELEGRAM_ALLOWED_USER_1}",
+        "${TELEGRAM_ALLOWED_USER_2}"
+      ],
+      "group_policy": "mention"
+    }
+  },
+  "tools": {
+    "mcpServers": {
+      "browser": {
+        "type": "streamableHttp",
+        "url": "http://playwright:8931/mcp"
+      },
+      "cuadre": {
+        "type": "streamableHttp",
+        "url": "http://cuadre-mcp:8970/mcp",
+        "headers": {
+          "Authorization": "Bearer ${CUADRE_MCP_HTTP_TOKEN}"
+        }
+      }
+    },
+    "web": {
+      "search": {
+        "provider": "tavily",
+        "apiKey": "${TAVILY_API_KEY}"
+      }
+    },
+    "exec": {
+      "pathAppend": "/home/nanobot/.local/bin",
+      "allowedEnvKeys": [
+        "GOG_ACCOUNT",
+        "GOG_KEYRING_PASSWORD",
+        "GOG_KEYRING_BACKEND",
+        "XDG_CONFIG_HOME",
+        "HOME",
+        "TRAINING_PEAKS_USERNAME",
+        "TRAINING_PEAKS_PASSWORD"
+      ]
+    }
+  },
+  "modelPresets": {
+    "fast": {
+      "model": "anthropic/claude-haiku-4-5",
+      "provider": "openrouter",
+      "maxTokens": 2048,
+      "contextWindowTokens": 200000,
+      "temperature": 0.7
+    },
+    "deep": {
+      "model": "anthropic/claude-sonnet-4-6",
+      "provider": "openrouter",
+      "maxTokens": 4096,
+      "contextWindowTokens": 200000,
+      "temperature": 0.1
+    },
+    "cheap-bulk": {
+      "model": "google/gemini-2.5-flash",
+      "provider": "openrouter",
+      "maxTokens": 4096,
+      "contextWindowTokens": 1000000,
+      "temperature": 0.5
+    }
+  }
+}

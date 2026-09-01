@@ -1,0 +1,16 @@
+# Per-instance secrets (any vendor, any profile)
+**/.env
+client_secret_*.json
+openclaw.json
+
+# OpenClaw — build cache + business data + debug snapshots
+openclaw/.dockerfile.hash
+openclaw/data/
+openclaw/snapshots/
+openclaw/debug/
+
+# Nanobot — VPS workspace snapshot target (scratch; promote to instances/ to version)
+nanobot/debug/
+
+# OS
+.DS_Store
